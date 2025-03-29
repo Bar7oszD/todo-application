@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
+</head>
+<body>
+
+<div class="container">
+    <h1>Moja lista zadań</h1>
+    <ul id="todoList">
+
+    </ul>
+    <form id ="todoForm">
+        <input type="text" id="title" placeholder="Tytuł zadania" required />
+        <input type="text " id="description" placeholder="Opis zadania" />
+        <button type="submit">Dodaj zadanie</button>
+    </form>
+</div>
+<style>
+    body{
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f9;
+    }
+    .container {
+    max-width: 600px;
+    margin:50px auto;
+    padding: 20px;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h1{
+    text-align:center;
+    }
+    ul {
+    list-style: none;
+    padding left: 0;
+    }
+    li {
+    background-color:#f8f8f8;
+    padding:10px;
+    margin-bottom:10px;
+    border-radius:5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+</style>
+
+<script>
+    let todoList =[];
+
+    function renderTodoList() {
+    const ul = document. getElementById("todoList");
+    ul.innerHTML = "";
+    todoList.forEach((todo,index)=> {
+    const li = document.createElement("li");
+    li.innerHTML = `${todo.title} - ${todo.description || "Brak opisu"}`;
+    ul.appendChild(li);
+    });
+
+   }
+
+    function addTodo(event){
+    event.preventDefault();
+
+    const title =document. getElementById("title").value;
+    const description = document.getElementById("description").value;
+
+    todoList.push({title,description});
+
+    document.getElementById("todoForm").reset();
+
+    renderTodoList();
+    }
+    document.getElementById("todoForm").addEventListener("submit",addTodo);
+
+
+</script>
+
+
+
+</body>
+</html>
