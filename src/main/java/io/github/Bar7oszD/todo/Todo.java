@@ -11,9 +11,9 @@ class Todo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @NotBlank(message = "Title must not be empty")
-    @Size(min=5, max=50, message = "Tytuł musi mieć od 5 do 50 znaków")
+    @Size(min=5, max=50, message = "The length of title is between 5 and 50 characters")
     private String title;
-    @Size(max=300, message = "Opis nie może być większy niz 300 znaków")
+    @Size(max=300, message = "The maximum length of description is 300 characters")
     private String description;
     private boolean completed;
 
