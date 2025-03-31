@@ -8,79 +8,209 @@
 <body>
 
 <div class="container">
-    <h1>Moja lista zadań</h1>
-    <ul id="todoList">
+    <h1>Dodaj zadanie</h1>
 
-    </ul>
-    <form id ="todoForm">
+
+    <form id="todoForm">
         <input type="text" id="title" placeholder="Tytuł zadania" required />
-        <input type="text " id="description" placeholder="Opis zadania" />
+        <input type="text" id="description" placeholder="Opis zadania" />
+        <label for="completed">Zakończone?</label>
+        <input type="checkbox" id="completed" />
         <button type="submit">Dodaj zadanie</button>
     </form>
+
+    <h2 id="editTitleHeader" style="display: none;">Edytowanie zadania</h2>
+    <form id="editForm" style="display: none;">
+        <input type="text" id="editTitle" placeholder="Tytuł zadania" required />
+        <input type="text" id="editDescription" placeholder="Opis zadania" />
+        <label for="editCompleted">Zakończone</label>
+        <input type="checkbox" id="editCompleted" />
+        <button type="submit">Zapisz zmiany</button>
+    </form>
+
 </div>
+
+<div class ="container2">
+    <h1>Nie ma jeszcze żadnych zadań</h1>
+    <ul id="todoList"></ul>
+
+</div>
+
+
 <style>
-    body{
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f4f4f9;
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f9;
+        margin: 0;
+        padding: 0;
     }
+
     .container {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 20px;
+        background-color: white;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .container2 {
     max-width: 600px;
-    margin:50px auto;
+    margin: 50px auto;
     padding: 20px;
-    background-color: white;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    background-color: #f4f4f9;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
-    h1{
-    text-align:center;
+
+    h1, h2 {
+        text-align: center;
     }
+
     ul {
-    list-style: none;
-    padding left: 0;
+        list-style: none;
+        padding-left: 0;
     }
+
     li {
-    background-color:#f8f8f8;
-    padding:10px;
-    margin-bottom:10px;
-    border-radius:5px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+        background-color: #f8f8f8;
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
 </style>
 
 <script>
-    let todoList =[];
+    // Funkcja do ładowania zadań
+    function loadTodos() {
+        fetch("http://localhost:8080/todos")
+        .then(response => response.json())
+        .then(data => {
+            const todoList = document.getElementById("todoList");
+            todoList.innerHTML = ""; // Czyścimy listę
 
-    function renderTodoList() {
-    const ul = document. getElementById("todoList");
-    ul.innerHTML = "";
-    todoList.forEach((todo,index)=> {
-    const li = document.createElement("li");
-    li.innerHTML = `${todo.title} - ${todo.description || "Brak opisu"}`;
-    ul.appendChild(li);
+            data._embedded.todos.forEach(todo => {
+                const li = document.createElement("li");
+                li.textContent = `${todo.title} - ${todo.description} - ${todo.completed ? "Zakończone" : "Nie zakończone"}`;
+
+                // Przycisk do usuwania zadania
+                const deleteButton = document.createElement("button");
+                deleteButton.textContent = "Usuń";
+                deleteButton.onclick = () => deleteTodo(todo._links.self.href);
+
+                // Przycisk do edytowania zadania
+                const editButton = document.createElement("button");
+                editButton.textContent = "Edytuj";
+                editButton.onclick = () => editTodo(todo);
+
+                li.appendChild(deleteButton);
+                li.appendChild(editButton);
+                todoList.appendChild(li);
+            });
+        })
+        .catch(error => console.error("Błąd podczas ładowania zadań:", error));
+    }
+
+    // Funkcja do dodawania nowego zadania
+    document.getElementById("todoForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        const title = document.getElementById("title").value;
+        const description = document.getElementById("description").value;
+        const completed = document.getElementById("completed").checked;
+
+        const todo = {
+            title: title,
+            description: description,
+            completed: completed
+        };
+
+        fetch("http://localhost:8080/todos", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(todo)
+        })
+        .then(response => {
+            if (response.ok) {
+                loadTodos(); // Ładujemy wszystkie zadania po zapisaniu nowego
+            } else {
+                console.log("Błąd przy zapisie zadania");
+            }
+        })
+        .catch(error => console.error("Błąd podczas wysyłania zapytania POST:", error));
     });
 
-   }
-
-    function addTodo(event){
-    event.preventDefault();
-
-    const title =document. getElementById("title").value;
-    const description = document.getElementById("description").value;
-
-    todoList.push({title,description});
-
-    document.getElementById("todoForm").reset();
-
-    renderTodoList();
+    // Funkcja do usuwania zadania
+    function deleteTodo(url) {
+        fetch(url, {
+            method: "DELETE"
+        })
+        .then(response => {
+            if (response.ok) {
+                loadTodos();  // Po usunięciu zadania ładujemy ponownie listę
+            } else {
+                console.log("Błąd przy usuwaniu zadania");
+            }
+        })
+        .catch(error => console.error("Błąd podczas usuwania zadania:", error));
     }
-    document.getElementById("todoForm").addEventListener("submit",addTodo);
+    // Funkcja do edytowania zadania
+function editTodo(todo) {
+    // Ustawienie wartości formularza edycji
+    document.getElementById("editTitle").value = todo.title;
+    document.getElementById("editDescription").value = todo.description;
+    document.getElementById("editCompleted").checked = todo.completed;
+
+    document.querySelector(".container h1").textContent = "Edytuj zadanie";
+
+    // Ukrycie formularza dodawania i pokazanie formularza edycji
+    document.getElementById("todoForm").style.display = "none";
+    document.getElementById("editForm").style.display = "block";
+
+    // Usunięcie poprzedniego nasłuchiwania zdarzenia, aby uniknąć wielokrotnego przypisywania
+    const editForm = document.getElementById("editForm");
+    editForm.onsubmit = function(event) {
+        event.preventDefault();
+
+        const updatedTodo = {
+            title: document.getElementById("editTitle").value,
+            description: document.getElementById("editDescription").value,
+            completed: document.getElementById("editCompleted").checked
+        };
+
+        fetch(todo._links.self.href, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(updatedTodo)
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error("Błąd przy edycji zadania");
+            }
+        })
+        .then(() => {
+            loadTodos(); // Odświeżenie listy zadań
+            document.getElementById("editForm").style.display = "none"; // Ukrycie formularza edycji
+            document.getElementById("todoForm").style.display = "block"; // Pokazanie formularza dodawania
+            document.querySelector(".container h1").textContent = "Dodaj zadanie";
 
 
+        })
+        .catch(error => console.error("Błąd podczas wysyłania zapytania PUT:", error));
+    };
+}
+
+
+
+    // Ładujemy zadania po załadowaniu strony
+    window.onload = loadTodos;
 </script>
-
-
 
 </body>
 </html>
