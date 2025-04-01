@@ -10,7 +10,6 @@
 <div class="container">
     <h1>Dodaj zadanie</h1>
 
-
     <form id="todoForm">
         <input type="text" id="title" placeholder="Tytuł zadania" required />
         <input type="text" id="description" placeholder="Opis zadania" />
@@ -89,6 +88,11 @@
             const todoList = document.getElementById("todoList");
             todoList.innerHTML = ""; // Czyścimy listę
 
+             if (data._embedded.todos.length !== 0) {
+            document.querySelector(".container2 h1").textContent = "Moje zadania";
+        }else {
+            document.querySelector(".container2 h1").textContent = "Nie ma jeszcze żadnych zadań";
+        }
             data._embedded.todos.forEach(todo => {
                 const li = document.createElement("li");
                 li.textContent = `${todo.title} - ${todo.description} - ${todo.completed ? "Zakończone" : "Nie zakończone"}`;
