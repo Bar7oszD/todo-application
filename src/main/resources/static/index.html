@@ -16,18 +16,16 @@
 </div>
 
 <div class="container">
-    <h1>Dodaj zadanie</h1>
+    <h1>Tworzenie nowego zadania</h1>
 
     <form id="todoForm">
         <input type="text" id="title" placeholder="Tytuł zadania" required />
         <input type="text" id="description" placeholder="Opis zadania" />
-        <label for="completed">Zakończone?</label>
-        <input type="checkbox" id="completed" />
-        <button type="submit">Dodaj zadanie</button>
+        <button class="addtaskbutton" type="submit">Dodaj zadanie</button>
     </form>
 
     <h2 id="editTitleHeader" style="display: none;">Edytowanie zadania</h2>
-    <form id="editForm" style="display: none;">
+    <form id="editForm" style="display: none">
         <input type="text" id="editTitle" placeholder="Tytuł zadania" required />
         <input type="text" id="editDescription" placeholder="Opis zadania" />
         <label for="editCompleted">Zakończone</label>
@@ -38,7 +36,7 @@
 </div>
 
 <div class ="container2">
-    <h1>Nie ma jeszcze żadnych zadań</h1>
+    <h1>Nie ma jeszcze żadnych zadań &#x1F61E</h1>
     <ul id="todoList"></ul>
 
 </div>
@@ -72,37 +70,54 @@
     }
 
     .container {
-        max-width: 600px;
-        margin: 50px auto;
-        padding: 20px;
-        background-color: white;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+
+    margin-top: 120px;
+    margin-bottom: 20px;
+    margin-left: 20px;
+    align-items: center;
     }
+
+    .addtaskbutton {
+    width: 130px;
+    padding: 10px 20px;
+    margin-top:10px;
+    background-color: #000;
+    color: #FFC300;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+    transition: width 0.5s ease;
+    }
+
+    .addtaskbutton:hover {
+    width: 170px;
+    }
+
+    #title, #description, #editTitle, #editDescription{
+    height: 20px;
+    padding: 5px;
+    background-color: #fff;
+    border-radius: 20px;
+    border: 2px solid;
+    }
+
     .container2 {
-    max-width: 600px;
-    margin: 50px auto;
-    padding: 20px;
-    background-color: #f4f4f9;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     }
 
     h1, h2 {
-        text-align: center;
+
     }
 
     ul {
-        list-style: none;
-        padding-left: 0;
+
     }
 
     li {
-        background-color: #f8f8f8;
-        padding: 10px;
-        margin-bottom: 10px;
-        border-radius: 5px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+
     }
 </style>
 
