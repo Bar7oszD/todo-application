@@ -15,13 +15,18 @@
     <h1 id="app_name"> To-Do-App </h1>
 </div>
 
+
+<div class="main">
 <div class="container">
-    <h1>Tworzenie nowego zadania</h1>
+    <h1 id="hl1">Tworzenie nowego zadania</h1>
 
     <form id="todoForm">
         <input type="text" id="title" placeholder="Tytuł zadania" required />
         <input type="text" id="description" placeholder="Opis zadania" />
+        <label for="completed">Zakończone?</label>
+        <input type="checkbox" id="completed" />
         <button class="addtaskbutton" type="submit">Dodaj zadanie</button>
+
     </form>
 
     <h2 id="editTitleHeader" style="display: none;">Edytowanie zadania</h2>
@@ -40,7 +45,7 @@
     <ul id="todoList"></ul>
 
 </div>
-
+</div>
 
 <style>
     body {
@@ -62,54 +67,72 @@
     font-weight: 100;
     font-style: normal;
     text-align: left;
-    padding: 10px 20px;
+    padding: 25px 30px;
     width: 100%;
     position: fixed;
+    }
 
+    .main{
+    display: flex;
 
     }
 
-    .container {
+    .container{
     display: flex;
-
     margin-top: 120px;
-    margin-bottom: 20px;
-    margin-left: 20px;
-    align-items: center;
+    align-items: top;
+    width: 700px;
     }
 
     .addtaskbutton {
+     border: 2px solid black;
+     border-radius: 20px;
+     margin-top: 5px;
+     background-color: #000;
+     color: #FFC300;
+     padding: 10px 20px;
+     cursor: pointer;
+     width: 130px;
+     transition: width 0.5s ease;
+    }
+
+    .addtaskbutton:hover{
+    width: 173.2px
+    }
+
+    #title, #description, #editTitle, #editDescription {
+    border: 2px solid black;
+    border-radius: 20px;
+    margin-top: 5px;
+    background-color: #fff;
     width: 130px;
     padding: 10px 20px;
-    margin-top:10px;
-    background-color: #000;
-    color: #FFC300;
-    border-radius: 20px;
-    border: none;
-    cursor: pointer;
-    transition: width 0.5s ease;
     }
 
-    .addtaskbutton:hover {
-    width: 170px;
+    #hl1 {
+    max-width: 270px;
     }
 
-    #title, #description, #editTitle, #editDescription{
-    height: 20px;
-    padding: 5px;
-    background-color: #fff;
-    border-radius: 20px;
-    border: 2px solid;
+    #todoForm {
+   max-width: 420px;
     }
+
+
+
+
+
+
+
+
+
 
     .container2 {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+     margin-top: 120px;
+
     }
 
     h1, h2 {
-
+    margin: 0;
     }
 
     ul {
@@ -118,6 +141,36 @@
 
     li {
 
+    }
+
+
+
+
+
+
+
+     @media (max-width: 768px)
+    .container {
+    display: flex;
+    margin-top: 120px;
+    margin-bottom: 20px;
+    margin-left: 20px;
+    align-items: center;
+    }
+
+     @media (max-width: 768px) {
+    #hl1{
+    margin-top: 8px;
+    }
+}
+
+    @media (max-width: 768px)
+    #title, #description, #editTitle, #editDescription{
+    height: 20px;
+    padding: 5px;
+    background-color: #fff;
+    border-radius: 20px;
+    border: 2px solid;
     }
 </style>
 
@@ -132,9 +185,9 @@
 
              if (data._embedded.todos.length !== 0) {
             document.querySelector(".container2 h1").textContent = "Moje zadania";
-        }else {
-            document.querySelector(".container2 h1").textContent = "Nie ma jeszcze żadnych zadań";
-        }
+
+
+
             data._embedded.todos.forEach(todo => {
                 const li = document.createElement("li");
                 li.textContent = `${todo.title} - ${todo.description} - ${todo.completed ? "Zakończone" : "Nie zakończone"}`;
@@ -153,6 +206,17 @@
                 li.appendChild(editButton);
                 todoList.appendChild(li);
             });
+
+            } else {
+                // Jeśli brak zadań, zmieniamy nagłówek i pokazujemy formularz dodawania
+                document.querySelector(".container2 h1").textContent = "Nie ma jeszcze żadnych zadań";
+
+                // Ukrywamy formularz edycji (jeśli jest widoczny) i pokazujemy formularz dodawania nowych zadań
+                document.getElementById("editForm").style.display = "none";
+                document.getElementById("todoForm").style.display = "block";
+                document.querySelector(".container h1").textContent = "Tworzenie nowego zadania";
+            }
+
         })
         .catch(error => console.error("Błąd podczas ładowania zadań:", error));
     }
@@ -244,7 +308,7 @@ function editTodo(todo) {
             loadTodos(); // Odświeżenie listy zadań
             document.getElementById("editForm").style.display = "none"; // Ukrycie formularza edycji
             document.getElementById("todoForm").style.display = "block"; // Pokazanie formularza dodawania
-            document.querySelector(".container h1").textContent = "Dodaj zadanie";
+            document.querySelector(".container h1").textContent = "Tworzenie nowego zadania";
 
 
         })
