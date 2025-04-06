@@ -23,8 +23,6 @@
     <form id="todoForm">
         <input type="text" id="title" placeholder="Tytuł zadania" required />
         <input type="text" id="description" placeholder="Opis zadania" />
-        <label for="completed">Zakończone?</label>
-        <input type="checkbox" id="completed" />
         <button class="addtaskbutton" type="submit">Dodaj zadanie</button>
 
     </form>
@@ -33,15 +31,19 @@
     <form id="editForm" style="display: none">
         <input type="text" id="editTitle" placeholder="Tytuł zadania" required />
         <input type="text" id="editDescription" placeholder="Opis zadania" />
+
+
         <label for="editCompleted">Zakończone</label>
         <input type="checkbox" id="editCompleted" />
+
         <button type="submit">Zapisz zmiany</button>
     </form>
 
 </div>
 
 <div class ="container2">
-    <h1>Nie ma jeszcze żadnych zadań &#x1F61E</h1>
+    <h1 id="emptyList">Nie ma jeszcze żadnych zadań &#x1F61E</h1>
+    <h1 id="completedList" style="display:none">Edytuj zadanie </h1>
     <ul id="todoList"></ul>
 
 </div>
@@ -112,6 +114,10 @@
     #hl1 {
     max-width: 270px;
     }
+    #todoList {
+    list-style-type: none;
+
+}
 
     #todoForm {
    max-width: 420px;
@@ -184,14 +190,16 @@
             todoList.innerHTML = ""; // Czyścimy listę
 
              if (data._embedded.todos.length !== 0) {
-            document.querySelector(".container2 h1").textContent = "Moje zadania";
-
-
+            document.querySelector("#emptyList").style.display="none";
+            document.querySelector("#completedList").style.display="block";
 
             data._embedded.todos.forEach(todo => {
                 const li = document.createElement("li");
-                li.textContent = `${todo.title} - ${todo.description} - ${todo.completed ? "Zakończone" : "Nie zakończone"}`;
 
+                // Tworzymy checkbox dla każdego zadania
+                const checkbox = createCheckbox(todo);
+
+                const textNode = document.createTextNode(`${todo.title} - ${todo.description}`);
                 // Przycisk do usuwania zadania
                 const deleteButton = document.createElement("button");
                 deleteButton.textContent = "Usuń";
@@ -202,6 +210,9 @@
                 editButton.textContent = "Edytuj";
                 editButton.onclick = () => editTodo(todo);
 
+
+                li.appendChild(checkbox);
+                li.appendChild(textNode);
                 li.appendChild(deleteButton);
                 li.appendChild(editButton);
                 todoList.appendChild(li);
@@ -209,7 +220,8 @@
 
             } else {
                 // Jeśli brak zadań, zmieniamy nagłówek i pokazujemy formularz dodawania
-                document.querySelector(".container2 h1").textContent = "Nie ma jeszcze żadnych zadań";
+                document.querySelector("#completedList").style.display="none";
+                document.querySelector("#emptyList").style.display="block";
 
                 // Ukrywamy formularz edycji (jeśli jest widoczny) i pokazujemy formularz dodawania nowych zadań
                 document.getElementById("editForm").style.display = "none";
@@ -221,13 +233,58 @@
         .catch(error => console.error("Błąd podczas ładowania zadań:", error));
     }
 
+
+// Funkcja do aktualizacji statusu zadania
+function updateTodoStatus(url, updatedTodo) {
+    fetch(url, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(updatedTodo)  // Przekazujemy obiekt zaktualizowanego zadania
+    })
+    .then(response => {
+        if (response.ok) {
+            loadTodos();  // Po zaktualizowaniu zadania ładujemy ponownie listę
+        } else {
+            console.log("Błąd przy aktualizacji zadania");
+        }
+    })
+    .catch(error => console.error("Błąd podczas wysyłania zapytania PATCH:", error));
+}
+
+
+// Funkcja do tworzenia checkboxa
+function createCheckbox(todo) {
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.checked = todo.completed;  // Ustawiamy stan checkboxa na podstawie stanu "completed" w obiekcie todo
+
+    checkbox.onchange = () => {
+        // Zmieniamy stan "completed" w obiekcie todo
+        const updatedTodo = {
+            completed: checkbox.checked // Zmieniamy tylko pole "completed"
+        };
+
+        // Wywołujemy funkcję do zaktualizowania zadania
+        updateTodoStatus(todo._links.self.href, updatedTodo);
+    };
+
+    return checkbox;
+}
+
+
+
+
+
+
     // Funkcja do dodawania nowego zadania
     document.getElementById("todoForm").addEventListener("submit", function(event) {
         event.preventDefault();
 
         const title = document.getElementById("title").value;
         const description = document.getElementById("description").value;
-        const completed = document.getElementById("completed").checked;
+        const completed =false;
 
         const todo = {
             title: title,
