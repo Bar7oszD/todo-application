@@ -40,7 +40,7 @@
 
 <div class ="container2">
     <h1 id="emptyList">Nie ma jeszcze żadnych zadań &#x1F61E</h1>
-    <h1 id="completedList" style="display:none">Moje zadania  &#x1F60A </h1>
+    <h1 id="completedList" style="display:none">Moje zadania: </h1>
     <ul id="todoList"></ul>
 
 </div>
@@ -69,6 +69,7 @@
     padding: 25px 30px;
     width: 100%;
     position: fixed;
+    z-index: 999;
     }
 
 
@@ -82,6 +83,7 @@
     display: flex;
     justify-content: center;
     gap: 20px;
+    flex-wrap: wrap:
 
     }
 
@@ -210,19 +212,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
     .container2 {
      margin-top: 200px;
      height: 320px;
@@ -232,7 +221,13 @@
      box-shadow: 15px 15px 40px rgba(0, 0, 0, 1), -15px -15px 40px rgba(0, 0, 0, 1);
      padding: 10px 20px;
      border-radius: 20px;
-      transition: transform 0.3s ease, filter 0.3s ease;
+     transition: transform 0.3s ease, filter 0.3s ease;
+
+
+    }
+
+    #emptyList{
+   padding-left: 20px;
 
 
     }
@@ -241,43 +236,47 @@
     margin: 0;
     }
 
-    ul {
-
-    }
-
-    li {
-
-    }
-
-
-
-
-
-
-
-     @media (max-width: 768px)
-    .container {
-    display: flex;
-    margin-top: 120px;
-    margin-bottom: 20px;
-    margin-left: 20px;
+    @media (max-width:1139px){
+    .main {
+    flex-direction: column;
     align-items: center;
+    justify-items: center;
+
+
     }
 
-     @media (max-width: 768px) {
+    .container{
+    margin-top: 110px;
+    width: 85%;
+    }
+
     #hl1{
-    margin-top: 8px;
+    margin-left: 10px;
     }
-}
 
-    @media (max-width: 768px)
-    #title, #description, #editTitle, #editDescription{
-    height: 20px;
-    padding: 5px;
-    background-color: #fff;
-    border-radius: 20px;
-    border: 2px solid;
+    .container2{
+    margin-top:20px;
+    width: 85%;
+
     }
+
+     #emptyList{
+     padding-left: 0px;
+     width: 450px;
+
+    }
+
+
+
+    }
+
+
+
+
+
+
+
+
 </style>
 
 <script>
@@ -470,6 +469,8 @@ function editTodo(todo) {
     // Ukrycie formularza dodawania i pokazanie formularza edycji
     document.getElementById("todoForm").style.display = "none";
     document.getElementById("editForm").style.display = "block";
+
+document.getElementById("editForm").style.display = "block";
 
     // Usunięcie poprzedniego nasłuchiwania zdarzenia, aby uniknąć wielokrotnego przypisywania
     const editForm = document.getElementById("editForm");
