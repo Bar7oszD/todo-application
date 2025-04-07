@@ -81,7 +81,7 @@
     .main{
     display: flex;
     justify-content: center;
-    gap: 30px;
+    gap: 20px;
 
     }
 
@@ -93,6 +93,9 @@
     width: 700px;
     height: 320px;
     box-shadow: 15px 15px 40px rgba(0, 0, 0, 1), -15px -15px 40px rgba(0, 0, 0, 1);
+    padding: 10px 20px;
+    border-radius: 20px;
+     transition: transform 0.3s ease, filter 0.3s ease;
     }
 
     .buttons {
@@ -128,6 +131,7 @@
     justify-content: center;  /* Ustawienie poziomego wyśrodkowania */
     text-align: center;
     margin-right: 35px;
+    margin-left: 15px;
 
     }
 
@@ -151,19 +155,42 @@
   border: 2px solid black;
   padding: 10px 20px;
   margin-bottom: 10px;
+  height: 30px;
   width: 500px;
   display: flex;
   gap: 20px;
   align-items: center;
-
+  overflow: hidden;
+  transition: height, padding 0.5s ease;
   }
+
+  #todoList li:hover {
+    height: auto;
+    padding-bottom: 10px;
+    overflow: visible;
+    }
 
   span {
   width: 230px;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  white-space: normal;
   margin-right: 80px;
+  overflow-wrap: break-word;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  transition: height ;
+
+    }
+
+#todoList li:hover span {
+  overflow: visible; /* Pozwala na rozsunięcie zawartości w dół */
+  white-space: normal; /* Pozwala na zawijanie tekstu */
+}
+
+.todo-checkbox:checked ~ span {
+    text-decoration: line-through;
+    color: gray;
 }
 
     .editDeleteButtons {
@@ -194,6 +221,8 @@
 
 
 
+
+
     .container2 {
      margin-top: 200px;
      height: 320px;
@@ -202,6 +231,8 @@
      color: #FFC300;
      box-shadow: 15px 15px 40px rgba(0, 0, 0, 1), -15px -15px 40px rgba(0, 0, 0, 1);
      padding: 10px 20px;
+     border-radius: 20px;
+      transition: transform 0.3s ease, filter 0.3s ease;
 
 
     }
@@ -250,6 +281,38 @@
 </style>
 
 <script>
+    const container1 = document.querySelector(".container");
+    const container2 = document.querySelector(".container2")
+
+    container1.addEventListener("mouseenter" , () => {
+        container1.style.transform = "scale(1.05)";
+        container1.style.filter = "brightness(1.1)";
+        container2.style.transform = "scale(0.95)";
+        container2.style.filter = "brightness(0.7) blur(2px)";
+    });
+    container1.addEventListener("mouseleave" , () => {
+        container1.style.transform = "";
+        container1.style.filter = "";
+        container2.style.transform = "";
+        container2.style.filter = "";
+    });
+
+     container2.addEventListener("mouseenter" , () => {
+        container2.style.transform = "scale(1.05)";
+        container2.style.filter = "brightness(1.1)";
+        container1.style.transform = "scale(0.95)";
+        container1.style.filter = "brightness(0.7) blur(2px)";
+    });
+     container2.addEventListener("mouseleave" , () => {
+        container2.style.transform = "";
+        container2.style.filter = "";
+        container1.style.transform = "";
+        container1.style.filter = "";
+    });
+
+
+
+
     // Funkcja do ładowania zadań
     function loadTodos() {
         fetch("http://localhost:8080/todos")
@@ -331,7 +394,7 @@ function createCheckbox(todo) {
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
     checkbox.checked = todo.completed;  // Ustawiamy stan checkboxa na podstawie stanu "completed" w obiekcie todo
-
+     checkbox.classList.add("todo-checkbox");
     checkbox.onchange = () => {
         // Zmieniamy stan "completed" w obiekcie todo
         const updatedTodo = {
